@@ -153,6 +153,9 @@ def get_next_path(
 
 
 def load_model(
+    n_layer,
+    n_embd,
+    n_head,
     model_id="google/t5-efficient-tiny",
     model_type="seq2seq",
     vocab_size=4096,
@@ -174,7 +177,7 @@ def load_model(
     )
     if random_init:
         log_on_main("Using random initialization", logger)
-        config = AutoConfig.from_pretrained(model_id)
+        config = AutoConfig.from_pretrained(model_id, n_layer=n_layer, n_head=n_head, n_embd=n_embd)
         if isinstance(config, T5Config):
             # The default initializer_factor (1.0) in transformers is too large
             config.initializer_factor = 0.05
@@ -503,6 +506,9 @@ class ChronosDataset(IterableDataset, ShuffleMixin):
 @use_yaml_config(param_name="config")
 def main(
     training_data_paths: str,
+    n_layer: int,
+    n_head: int,
+    n_embd: int,
     probability: Optional[str] = None,
     context_length: int = 512,
     prediction_length: int = 64,
@@ -606,7 +612,7 @@ def main(
                 min_length=min_past + prediction_length,
                 max_missing_prop=max_missing_prop,
             ),
-            FileDataset(path=Path(data_path), freq="h"),
+            FileDataset(path=Path(data_path), freq="h", pattern="data-*.arrow", ),
         )
         for data_path in training_data_paths
     ]
@@ -614,6 +620,9 @@ def main(
     log_on_main("Initializing model", logger)
 
     model = load_model(
+        n_layer=n_layer,
+        n_embd=n_embd,
+        n_head=n_head,
         model_id=model_id,
         model_type=model_type,
         vocab_size=n_tokens,
