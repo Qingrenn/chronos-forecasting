@@ -90,8 +90,8 @@ probability:
 - 0.004348
 - 0.000005
 - 0.002408
-n_layer: 18
-n_embd: 768
+n_layer: 12
+n_embd: 480
 n_head: 12
 context_length: 512
 prediction_length: 64

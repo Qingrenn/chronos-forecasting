@@ -109,7 +109,7 @@ model_id: openai-community/gpt2
 model_type: causal
 random_init: true
 tie_embeddings: true
-output_dir: ./output/
+output_dir: ./outputv2/
 tf32: true
 torch_compile: true
 tokenizer_class: "MeanScaleUniformBins"
